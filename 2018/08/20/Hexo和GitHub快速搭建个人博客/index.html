@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title>Hexo和GitHub快速搭建个人博客 [ CLi的博客 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">Hexo和GitHub快速搭建个人博客</h1>
+<article class="post markdown-style">
+  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
+<li>最近不是很忙，闲下来整理一些自己CSDN和OneNote上记录的技术点，还有一些技术书籍的笔记，CSDN总感觉不是很方便，习惯性每次都是记到OneNote上，然后再发到CSDN，排版很别扭。后来打算在自己的云服务器上写一个博客网站，但是确实费时费力估计自己设计的界面也不会太好看，偶然听朋友说hexo + github可以轻松的搭个博客，编辑可以用mark down，也有很多主题。今天第一篇记录搭建的过程，和网上其他教程大同小异，后续会把之前的技术积累陆续转移到这个博客上。</li>
+</ol>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><ol>
+<li>GitHub账号一个(GitHub相关配置等不作说明)。</li>
+<li>安装node.js（官网下载）。</li>
+<li>安装git（mac自带）。</li>
+<li>GitHub创建username.github.io的目录（格式固定，以后也是访问的url地址）。</li>
+</ol>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><ol>
+<li>因为装了node，所以有了npm命令，安装hexo。<pre>npm install -g hexo</pre></li>
+<li>本地创建、进入hexo目录。 <br> <code>hexo init</code><br><code>npm install</code></li>
+<li>这时候hexo就算安装好了。</li>
+</ol>
+<h3 id="测试hexo是否安装成功"><a href="#测试hexo是否安装成功" class="headerlink" title="测试hexo是否安装成功"></a>测试hexo是否安装成功</h3><ol>
+<li>生成html文件。<br><code>hexo g</code></li>
+<li>测试运行。<br><code>hexo s</code></li>
+<li>打开localhost:4000即可看见默认首页。</li>
+</ol>
+<h3 id="绑定GitHub"><a href="#绑定GitHub" class="headerlink" title="绑定GitHub"></a>绑定GitHub</h3><ol>
+<li>修改_config.yml，因为yml格式缘故“:”后需留一个空格！<br><pre>
+ deploy: 
+     type: git
+     repo: git@github.com:username/username.github.io.git
+     beanch: master
+</pre></li>
+<li>安装git插件。<br><pre>npm install hexo-deployer-git --save</pre></li>
+<li>安装过程中会提示输入git相关信息，输入即可。</li>
+<li>清除缓存、生成页面、部署(后续更新博客和主题也是这三个命令)。<pre>
+ hexo clean
+ hexo g
+ hexo deploy    
+</pre></li>
+<li>输入URL，即GitHub目录地址就可以访问了。</li>
+</ol>
+<h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><ol>
+<li><a href="https://hexo.io/themes/" target="_blank" rel="noopener">官方主题</a>上有很多主题可供选择，点击进入对应主题GitHub主页，clone到本地themes目录下即可，例如themes/iLiKE(本主题)。</li>
+<li>修改_config.yml的theme为主题名例如：<br><pre>theme: iLiKE</pre></li>
+<li>_config.yml也提供了其他属性的配置，例如网站标题，显示语言等，官网有具体说明可供修改。</li>
+<li>执行更新部署的三个命令再次访问即可。</li>
+<li>PS：我在部署时候遇到了Chrome的缓存问题，导致页面加载有问题，清除缓存即可。</li>
+</ol>
+<h3 id="更新文章"><a href="#更新文章" class="headerlink" title="更新文章"></a>更新文章</h3><ol>
+<li>hexo根目录执行<code>hexo new ‘文章名’</code>，source-&gt;_posts即出现文件，MarkDown编辑器编辑即可。</li>
+<li>更新执行上述三个命令即可</li>
+</ol>
+<h3 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h3><ol>
+<li>暂时没有绑定域名的需要，绑定流程也不是很麻烦，这里因为没有操作过，所以就不详细描述了。</li>
+</ol>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+
+    
+    <p>last update time 2018-08-20</p>
+    
+    
+    </div>
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © Cli 2017 - 2018
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a> & <a href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+</div>
+    </div>
+</body>
+</html>
