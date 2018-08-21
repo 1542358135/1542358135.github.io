@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title>spring boot邮件功能（QQ，Gmail） [ CLi的博客 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">spring boot邮件功能（QQ，Gmail）</h1>
+<article class="post markdown-style">
+  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
+<li>鉴于网上的许多Spring Boot email博客写的很详细了，基础实现部分一带而过，这篇中博客中只用到了spring freemarker模板的发送方式，记录测试当中的一些小坑和自己简单包装的工具类（以激活邮件模板为例，易于扩展为目标）。</li>
+</ol>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><ol>
+<li>依赖<pre>
+ &lt;dependency&gt;
+     &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+     &lt;artifactId&gt;spring-boot-starter-mail&lt;/artifactId&gt;
+ &lt;/dependency&gt;
+</pre></li>
+<li>配置文件（yml）<pre>
+ spring:
+       mail:
+         username: "发送人的邮箱"
+         password: "密码（QQ为授权码，获取方法下面会提到，gmail为邮箱密码）"
+         host: smtp.gmail(或qq).com
+         properties:
+           mail:
+             smtp:
+               auth: true
+               starttls:
+                 enable: true
+                 required: true
+</pre></li>
+<li>QQ授权码（密码）获取：QQ邮箱-&gt;设置-&gt;账户-&gt;POP3/SMTP服务，开启，获取授权码</li>
+<li>主要发送方法，以一个包装后的实体父类EmailBaseModel为参数：<pre>
+ @Autowired
+ private JavaMailSender mailSender;
+ @Autowired
+ private FreeMarkerConfigurer freeMarkerConfigurer;
+ @Override
+ public void sendMail(EmailBaseModel emailBaseModel) {
+     MimeMessage message;
+     try {
+         message = mailSender.createMimeMessage();
+         MimeMessageHelper helper = new MimeMessageHelper(message, true);
+         helper.setFrom("发送邮箱名");
+         helper.setTo(emailBaseModel.getDestination());
+         helper.setSubject(emailBaseModel.getEmailHtmlEnum().subject());
+         Template template = freeMarkerConfigurer.getConfiguration().getTemplate(emailBaseModel.getEmailHtmlEnum().path());
+         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, emailBaseModel);
+         helper.setText(html, true);
+         mailSender.send(message);
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
+ }
+</pre></li>
+<li>EmailBaseModel内提取了所有类型模板的共同元素，即发送的目的地邮箱、模板对应路径和邮件标题，其中路径和标题可以再提取出来，变成一个枚举类EmailHtmlEnum，每个模板的路径和标题就是枚举类的一个类型。<pre><br>@Getter<br>@Setter<br>public class EmailBaseModel {<br> public EmailBaseModel(String destination, EmailHtmlEnum emailHtmlEnum) {<pre><code>this.destination = destination;
+this.emailHtmlEnum = emailHtmlEnum;
+</code></pre> }<br> //目标邮箱<br> private String destination;<br> //标题和html路径的枚举类<br> private EmailHtmlEnum emailHtmlEnum;<br>}<br></pre></li>
+<li>每次增加模板EmailHtmlEnum里面增加对应的标题和Html Path（html模板放默认在resources的template路径下）。<pre>
+ public enum EmailHtmlEnum {
+     //参数为标题，本地路径
+     ACTIVATION("账号激活邮件", "ActivationEmail.html");
+     YOURTEMPLATE("自定义其他模板标题", "自定义其他模板.html");
+     ...
+     private String path;
+     private String subject;
+     EmailHtmlEnum(String subject, String path){
+         this.path = path;
+         this.subject = subject;
+     }
+     public String path() {
+         return this.path;
+     }
+     public String subject() {
+         return this.subject;
+     }
+}
+</pre></li>
+<li>可以提取出来通用属性的为5 6两个部分，还有一部分为各个模板html自定义显示的属性例如激活邮件里可能会有用户的id和激活码，这时继承EmailBaseModel，编写每个模板各自的实现，传入必要参数即可。<pre>
+@Setter
+@Getter
+public class EmailTemplateModelActivation extends EmailBaseModel{
+     public EmailTemplateModelActivation(String userId, String activateCode, String destination) {
+         super(destination, EmailHtmlEnum.ACTIVATION);
+         this.activateCode = activateCode;
+         this.userId = userId;
+     }
+     private String activateCode;
+     private String userId;
+}
+</pre></li>
+<li>resources/template下ActivationEmail.html的简单实现，类似于el表达式写法（body内的代码）<pre>
+ 激活账户地址：http://url/${userId}/${activateCode}
+</pre></li>
+<li>测试发送模板邮件，完成<pre>
+EmailTemplateModelActivation template = new EmailTemplateModelActivation(“1001”, "code", "user@qq.html");
+sendMail(template);
+</pre>
+</li>
+</ol>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+
+    
+    <p>last update time 2018-08-21</p>
+    
+    
+        <a class="extend next post-next" href="/2018/08/20/Hexo和GitHub快速搭建个人博客/">next</a>
+    
+    </div>
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © Cli 2017 - 2018
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a> & <a href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+</div>
+    </div>
+</body>
+</html>
