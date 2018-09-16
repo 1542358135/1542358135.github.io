@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title>spring boot下Tomcat使用阿里云免费ssl证书 [ CLi的博客 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">spring boot下Tomcat使用阿里云免费ssl证书</h1>
+<article class="post markdown-style">
+  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
+<li>最近帮朋友做了一个项目，其中遇到了需要申请ssl，最后还是选择了阿里云的免费ssl证书，因为域名也是在阿里云，在申请ssl时会比较方便。ssl证书有</li>
+</ol>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><ol>
+<li>申请域名（这篇博客侧重证书申请，域名方面略过）</li>
+<li>阿里云申请免费ssl证书<ul>
+<li>在阿里的产品搜索中搜索“ssl免费证书”</li>
+<li>在Symantec品牌下，会有一个免费的ssl证书选项，此类型证书只能绑定一个指定域名，不过免费的也就不用太奢求什么了。</li>
+<li>点击进入证书控制台，需补全相关信息，填写即可。<ul>
+<li>其中会有两个选项需要注意，第一个是域名验证类型，有DNS和文件，DNS需要在域名服务商进行授权配置，文件选项则需要上传相关文件到服务器，我选择了DNS，因为域名也在阿里云，申请证书时可以勾选自动配置选项，很方便；第二个是csr，这个是证书的私钥，系统自动生成即可。</li>
+</ul>
+</li>
+<li>等待审核通过，即可下载证书ssl可配置在NGINX、Apache或Tomcat，我这边服务器暂时还没上NGINX，所以配置在spring boot的Tomcat下</li>
+</ul>
+</li>
+<li>准备一台服务器（略）</li>
+<li>ssl相关配置（yml）<ul>
+<li>Tomcat可用PFX格式和JKS格式，我这里用JKS，下载包中并没有JKS文件，需要做一下处理，.pfx改成下载包中的pfx文件<pre>
+keytool -importkeystore -srckeystore 214995398460530.pfx -destkeystore your-name.jks -srcstoretype PKCS12 -deststoretype JKS
+</pre></li>
+<li>以下是我的yml文件ssl相关配置</li>
+<li>下载的证书中会有密码文件，填在key-store-password即可<pre>
+server:
+     &emsp;port: 443
+     &emsp;ssl:
+    &emsp;&emsp;key-store: your-name.jks
+    &emsp;&emsp;key-store-password: 2222222222
+    &emsp;&emsp;keyStoreType: JKS
+</pre></li>
+<li>默认打包后.jks文件放在项目同文件下重启即可生效，也可配置keystoreFile指定证书文件目录</li>
+<li>再次访问用Chrome https访问，就会出现安全访问的提示。</li>
+</ul>
+</li>
+</ol>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+
+    
+    <p>last update time 2018-09-16</p>
+    
+    
+        <a class="extend next post-next" href="/2018/08/23/maven基本功能及使用/">next</a>
+    
+    </div>
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © Cli 2017 - 2018
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a> & <a href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+</div>
+    </div>
+</body>
+</html>
