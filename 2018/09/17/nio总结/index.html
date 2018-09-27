@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title>nio总结 [ CLi的博客 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">nio总结</h1>
+<article class="post markdown-style">
+  <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
+<li>之前一直在做netty相关工作，所以相关总结从Java io和nio开始，本篇博客也是根据《netty权威指南》的前几章和自身工作经验总结。其中AIO本文带过不多涉及，netty也暂时没有AIO支持，也就侧面证实AIO在高并发io情境下并不会比现在的NIO好，不多BB。</li>
+</ol>
+<h2 id="基本Linux-IO模型"><a href="#基本Linux-IO模型" class="headerlink" title="基本Linux IO模型"></a>基本Linux IO模型</h2><ol>
+<li>IO原理<ul>
+<li>原文：Linux内核将所有外部设备看做一个文件来操作，对一个文件的读写会调用内核提供的系统命令，返回一个File Descriptor（文件描述符），而对于一个socket的读写也会有相应的描述符，描述符是一个数字，它指向内核中的一个结构体。</li>
+<li>个人理解：结合Java1.8源码，Java也有fd的抽象在io包下名字就叫FileDescriptor，这个类里面fd就是文中提到的数字，可以理解类似为指针，以找到对应的“文件”，当然这里的文件不只是狭义上的文件，也可以是套接字等。当然就算是指针一个数字干不了什么，所以就会用流，这也是源码中的in/out/err，Java并不希望用户随便创建文件描述符所以提供了这三个方法，分别用fd=0，1，2来代表标准输入、标准普通输出、和标准错误输出满足基本使用。</li>
+</ul>
+</li>
+<li>5种Unix基本网络模型<ul>
+<li>需简单了解的一些概念：<ul>
+<li>用户空间&amp;内核空间：为了保护系统数据安全，把系统进程和用户进程数据区域进行区分，分出用户空间和内核空间，这个是根据系统自动划分的。平时用户进程执行在用户空间，可以申请内存空间的操作权限，进行内存操作。</li>
+<li>用户态&amp;内核态：进程普通状态下对用户空间内存操作即为用户态，申请到内存空间操作权限后升级为内存态。</li>
+<li>IO工作流程简述：以套接字接收数据为例，服务端开始时程序处于用户态，流程开始，申请查看内核空间是否有完整数据接收到，接收完毕后，数据从内核空间复制到用户空间，即可操作数据（数据还会经过网卡等，中间过程暂时忽略）。</li>
+<li>缓冲区：数据的传输过程中，如果发现数据就执行传输，这样传输效率肯定会低，为了加快数据传输效率，IO流程中数据以缓冲区的方式进行传输，很多需要数据传输的地方都会用到，例如网卡缓冲区、用户缓冲区、内核缓冲区等，大体的思路是数据积攒到一定量统一处理，减少处理次数，当然这只是提高效率的方式之一。</li>
+<li>同步&amp;异步：即主动访问和被动回调的区别，同步（发起 - 轮询或阻塞检查内核空间是否接收完整数据 - 触发后续复制 - 完成IO操作），异步（发起 - 系统回调完成IO操作）</li>
+<li>阻塞&amp;非阻塞：即线程是否会被挂起，阻塞（线程挂起等待执行完毕），非阻塞（立即返回，通过轮询获取结果）</li>
+</ul>
+</li>
+<li>阻塞Bio（即Java中的基本IO）<ul>
+<li>BIO的流程很简单，IO流程（等待数据到达，复制到用户空间）串行阻塞执行，这种执行方式并发（多连接）效率很低，程序可通过创建和连接数相同的线程达到并发的目的，并发量不大的情况使用。</li>
+</ul>
+</li>
+<li>非阻塞IO（虽然非阻塞，但这种并不是Java中的NIO）<ul>
+<li>和BIO相比非阻塞如果数据未完整到达则会立即返回一个标识，表示数据没有接收到，多次轮询直到数据接收完毕，执行下一步内核空间到用户空间的复制。</li>
+</ul>
+</li>
+<li>多路复用IO（即Java中的NIO，但是某种意义讲并不是非阻塞的）<ul>
+<li>BIO在多连接并发的情况下采取new线程的方式，这种方式在连接数多的情况下肯定不合适，那有没有办法用一个线程监控多个连接，什么时候内核空间数据到了内核返回用户，100个连接里有N个可以处理了，ok线程开始逐个处理后续逻辑，没有就绪数据就循环阻塞在这等着内核返回信息（这也是为什么Java NIO并不是严格意义上的非阻塞），Linux的2.6版本中提供了epoll(之前为select/poll后面会具体说)，即多路复用IO模型的实现。说到这就要提到一个关于Java NIO的BUG，如果某种情况下线程阻塞等待，系统告知可继续执行，但是返回的是100个连接有0个可以处理，后面逻辑就可能触发空轮询，导致CPU空转，有兴趣可以看看网上其他博客的讲解和处理方法，很有意思。</li>
+</ul>
+</li>
+<li>信号驱动IO<ul>
+<li>这种IO方式通过开启信号驱动功能，数据就绪时采用回调通知的方式，通知执行后续复制到用户空间的逻辑。</li>
+</ul>
+</li>
+<li>异步IO（AIO）<ul>
+<li>AIO需要内核深度合作，发起流程后立即返回（非阻塞），等待内核完成检查数据，复制到用户空间等一系列操作，回调用户，执行完毕（异步）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+
+    
+    <p>last update time 2018-09-28</p>
+    
+    
+        <a class="extend next post-next" href="/2018/09/12/spring-boot下Tomcat使用阿里云免费ssl证书/">next</a>
+    
+    </div>
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © Cli 2017 - 2018
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a> & <a href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+</div>
+    </div>
+</body>
+</html>
