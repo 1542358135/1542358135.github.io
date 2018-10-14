@@ -61,14 +61,14 @@
 <h2 id="基本Linux-IO模型"><a href="#基本Linux-IO模型" class="headerlink" title="基本Linux IO模型"></a>基本Linux IO模型</h2><ol>
 <li>文件描述符<ul>
 <li>《权威指南》：Linux内核将所有外部设备看做一个文件来操作，对一个文件的读写会调用内核提供的系统命令，返回一个File Descriptor（文件描述符简称FD），而对于一个socket的读写也会有相应的描述符，描述符是一个数字，它指向内核中的一个结构体。</li>
-<li>个人理解：结合Java1.8源码，Java也有fd的抽象在io包下名字就叫FileDescriptor，IO几乎是围绕FileDescriptor展开的，这个类里面fd就是上文中提到的数字，可以理解类似为指针，以找到对应的“文件”，当然这里的文件不只是狭义上的文件，也可以是套接字等。通过FileDescriptor可以获取到流，这也是源码中的in/out/err，Java并不希望用户随便创建文件描述符所以提供了这三个方法，分别用fd=0，1，2来代表标准输入、标准普通输出、和标准错误输出满足基本使用。</li>
+<li>个人理解：结合Java1.8源码，Java也有fd的抽象在io包下名字就叫FileDescriptor，这个类里面fd就是上文中提到的数字，可以理解类似为指针，以找到对应的“文件”，当然这里的文件不只是狭义上的文件，也可以是套接字等。通过FileDescriptor可以获取到流，这也是源码中的in/out/err，Java并不希望用户随便创建文件描述符所以提供了这三个方法，分别用fd=0，1，2来代表标准输入、标准普通输出、和标准错误输出满足基本使用。</li>
 </ul>
 </li>
 <li>5种Unix基本网络模型<ul>
 <li>一些概念：<ul>
 <li>用户空间&amp;内核空间：为了保护系统数据安全，把系统进程和用户进程数据区域进行区分，分出用户空间和内核空间，这个是根据系统自动划分的。平时用户进程执行在用户空间，可以申请内存空间的操作权限，进行内存空间操作。</li>
-<li>用户态&amp;内核态：进程普通状态下对用户空间内存操作即为用户态，申请到内存空间操作权限后升级为内存态。</li>
-<li>IO工作流程简述：以socket服务端读为例，服务端程序开始时程序处于用户态，流程开始，申请查看内核空间是否有数据接收到，准备好数据后，数据从内核空间复制到用户空间，程序即可操作数据（数据还会经过网卡等，这里只关注局部原理），写则是一个反向的过程。</li>
+<li>用户态&amp;内核态：进程普通状态下对用户空间内存操作即为用户态，申请到内核空间操作权限后升级为内核态。</li>
+<li>IO工作流程简述：以socket服务端读为例，服务端程序开始时程序处于用户态，流程开始，申请查看内核空间是否有数据接收到，等到内核空间准备好数据后，数据从内核空间复制到用户空间，程序即可操作数据（数据还会经过网卡等，这里只关注局部原理），写则是一个反向的过程。</li>
 <li>缓冲区（块）：数据的传输过程中，每有一个单位的数据，就执行一次传输，这样传输效率肯定会低，为了加快数据传输效率，IO流程中数据可以以缓冲区的方式进行传输，很多需要数据传输的地方都会用到，例如网卡缓冲区、用户缓冲区、内核缓冲区等，大体的思路是数据积攒到一定量统一处理，减少处理次数，以提高效率。</li>
 <li>同步&amp;异步：在IO中，同步和异步是针对用户空间和内核空间交互方式的区别，以服务端接收为例，同步会因为数据没有到达内核空间以阻塞或轮询的方式拿到处理结果；异步则是把主动权交给内核，等待数据到达，内核执行完内核空间到用户空间的数据复制等一系列操作后，让内核进行通知，拿到处理结果。</li>
 <li>阻塞&amp;非阻塞：即执行IO时线程是否会被挂起。阻塞（线程挂起等待执行完毕），非阻塞（立即返回，通过其他方式获取结果）</li>
@@ -125,7 +125,7 @@
 <ul>
 <li>NIO类库：<ul>
 <li>缓冲区Buffer：<ul>
-<li>他包含一些要写入或者读出的数据，BIO中以流的方式读写数据，NIO中则是Buffer。缓冲区实质实际上是一个数组，也不仅仅是数组，它维护了读写的位置（limit）等信息。常用的Buffer为ByteBuffer，除此之外还有CharBuffer、ShortBuffer、IntBuffer、LongBuffer、FloatBuffer、DoubleBuffer。继承关系如下：<img src="http://pg6o3072v.bkt.clouddn.com/nio1_4.jpg" alt="avatar"></li>
+<li>他包含一些要写入或者读出的数据，BIO中以流的方式读写数据，NIO中则是Buffer。缓冲区实质实际上是一个数组，维护了读写的位置等信息。常用的Buffer为ByteBuffer，除此之外还有CharBuffer、ShortBuffer、IntBuffer、LongBuffer、FloatBuffer、DoubleBuffer。继承关系如下：<img src="http://pg6o3072v.bkt.clouddn.com/nio1_4.jpg" alt="avatar"></li>
 </ul>
 </li>
 <li>通道Channel：<ul>
@@ -143,11 +143,11 @@
 <li>书中代码量比较大，这里用文字描述步骤，后续会把样例demo传到GitHub上，并在代码注释中详细说明。服务端流程如下：<ul>
 <li>服务端创建时初始化ServerSocketChannel（绑定端口、设置为非阻塞模式等），该channel用于监听客户端的连接。</li>
 <li>创建selector，并将ServerSocketChannel注册到selector上，并监听“ACCEPT”操作位。这里有两点注意，selector并不是只注册客户端channel，服务端接收的channel也需要注册，轮询监听。第二点是，操作位就是指定selector对channel监听的状态，当触发该状态，返回结果。</li>
-<li>之后就是selector的无限循环，可设置循环间隔，当事件出发后，即可返回select ket的Set集合。遍历该Set，根据监听的事件进行后续逻辑，例如接收客户端则创建SokcetChannel并注册到selector，可读则读取其中的数据。服务端流程大致完成。</li>
+<li>之后就是selector的无限循环，可设置循环间隔，当事件触发后，即可返回select ket的Set集合。遍历该Set，该key可获取到channel，根据监听的事件进行后续逻辑，例如服务端接收客户端连接，则创建SokcetChannel并注册到selector，可读则读取其中的数据，流程完成等待下次触发“就绪”。服务端流程大致完成。</li>
 </ul>
 </li>
 <li>客户端序列图：<br>  <img src="http://pg6o3072v.bkt.clouddn.com/nio1_7.jpg" alt="avatar"><ul>
-<li>其实客户端NIO我在实际工作中并没有用到过，包括netty，因为一般NIO使用的场景为高并发长连接，客户端一般压力会比服务端小很多，所以大部分情况使用BIO客户端就可以满足需求了。这里流程不多做叙述，和服务端相似，后续也会。</li>
+<li>客户端NIO我在实际工作中并没有用到过，包括netty，因为一般NIO使用的场景为高并发长连接，客户端一般压力会比服务端小很多，所以大部分情况使用BIO客户端就可以满足需求了。这里流程不多做叙述，和服务端相似，后续也会给出demo。</li>
 </ul>
 </li>
 </ul>
@@ -164,7 +164,7 @@
     
 
     
-    <p>last update time 2018-10-08</p>
+    <p>last update time 2018-10-14</p>
     
     
         <a class="extend next post-next" href="/2018/09/12/spring-boot下Tomcat使用阿里云免费ssl证书/">next</a>
