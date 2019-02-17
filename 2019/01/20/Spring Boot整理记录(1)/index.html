@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title> [ CLi的博客 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title"></h1>
+<article class="post markdown-style">
+  <p>#Spring Boot整理记录(1)</p>
+<p>##Spring Boot和过去Spring的对比</p>
+<ol>
+<li>相比之前友好很多，例如自动加载配置，Tomcat和大量starter整合，开箱即用上手容易，但因为spring boot自身做了很多默认工作，导致开发时容易忽略很多默认细节，之前一直没有系统的整理过，这几篇不过多涉及源码部分，以后有时间会继续深入学习。</li>
+</ol>
+<h2 id="相关功能"><a href="#相关功能" class="headerlink" title="相关功能"></a>相关功能</h2><h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件:"></a>配置文件:</h3><ol>
+<li>注解的使用（部分）：<ul>
+<li>@ConfigurationProperties(prefix = “xx.yy”)<ul>
+<li>在bean类上标注，根据“prefix + 变量名”关联并绑定配置的key，支持JSR303格式校验(类上标注@Validated，成员变量上可用@NotNull，@Email等JSR303支持，匹配失败会报异常)，不支持SpEL表达式，支持复杂类型（可绑定配置里的List，Map等数据类型）。</li>
+<li>优点：支持复杂类型，JSR303校验</li>
+<li>缺点：需要单独写Java Bean</li>
+</ul>
+</li>
+<li>@Value(“${xx.yy.zz}”)<ul>
+<li>在bean的成员变量上全名称匹配关联配置，不支持JSR303格式校验，支持SpEL表达式（可在${}内用SpEL表达式表示key，如${2*6}，不是很常用），不支持复杂类。</li>
+<li>优点：用于获取简单类型，使用简单，只要在成员变量上标注即可，可以在原有类使用，不用单独创建bean</li>
+<li>缺点：不支持JSR303和复杂类型，需要每个变量上均标注注解</li>
+</ul>
+</li>
+<li>@PropertySource(value = {“classpath:xxx”})<ul>
+<li>指定读取的配置文件（多配置文件情况下），配合@Value或@ConfigurationProperties使用，可配置多个，默认application.properties</li>
+</ul>
+</li>
+<li>@ImportResource(locations = {“classpath:xxx”})<ul>
+<li>加载非默认spring配置文件，在main类上配置（默认时只会加载application.properties）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Profile（多环境切换） <ul>
+<li>多profile配置文件声明：<ul>
+<li>properties/yml（用的较多）：创建多个application-{profile}.properties/yml，用{profile}区分不同环境</li>
+<li>yml：可以在单个文件中用单起一行的”—“表示多环境配置的代码块，因为在同一文件，无法用{profile}区分环境，每个部分都需要用spring.profiles声明环境名</li>
+</ul>
+</li>
+<li>指定profile<ul>
+<li>默认读取配置指定：默认application.properties/yml（如果是yml”—“方式，默认第一个代码块）读取配置，可在该配置中选择激活其他配置文件（例如spring.profiles.active={profile}）</li>
+<li>命令行或jvm参数指定：命令行”–spring.profile.active”；jvm参数”-Dspring.profiles.active”</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>指定配置文件位置：<ul>
+<li>配置文件位置的默认读取顺序为”项目根目录/config” -&gt; “项目根目录” -&gt; “resources/config” -&gt; “resources”，如果以上位置有重叠的文件配置，会按相同配置高优先级覆盖低优先级，不冲突相互补充成最后的结果</li>
+<li>可通过命令行指定配置spring.config.location指定读取配置</li>
+</ul>
+</li>
+<li>配置加载顺序（官网给出17种，这里简单记录几个常用的）：<ul>
+<li>命令行参数：如启动命令”java -jar xx.jar –server.port=8088”</li>
+<li>带profile的配置文件：先加载包外带环境的文件（配置放在jar的同级目录），然后是包内</li>
+<li>不带profile的配置文件：先加载包外不带环境的文件（配置放在jar的同级目录），然后是包内</li>
+<li>@PropertySource指定的配置</li>
+</ul>
+</li>
+<li>自动配置原理:<ul>
+<li>在启动注解@SpringBootApplication中包含了@EnableAutoConfiguration（待补充）</li>
+</ul>
+</li>
+</ol>
+<h3 id="日志相关"><a href="#日志相关" class="headerlink" title="日志相关:"></a>日志相关:</h3><ol>
+<li>Spring Boot的日志实现（slf4j + lomback，spring boot默认）<ul>
+<li>slf4j和lomback的关系：slf4j是日志接口（译为日志门面），lomback是日志框架的具体实现，当然具体框架实现可以一定不是lomback，使用时具体配置根据不同的实现框架各自实现，slf4j具体写法就是熟悉的Logger logger = LoggerFactory.getLogger(Program.class)。</li>
+<li>常用日志框架：<ul>
+<li>日志门面：JCL（Commons Logging），SLF4J等</li>
+<li>实现框架：Log4j，JUL(java.util.logging)，logback等</li>
+<li>PS：spring原生实现使用的JCL + JUL(如果没有其他实现)，boot中试着排除了（使用maven的exclusions）spring中的门面JCL，使用了slf4j + lomback的实现方式</li>
+</ul>
+</li>
+<li>系统中的日志统一：很多情况系统中其他框架会使用自带的Log包，slf4j可以进行依赖包替换，增加一层代理，从而转化到slf4j包的实现。</li>
+</ul>
+</li>
+<li>spring boot的默认配置（部分）：<ul>
+<li>logging.level.指定路径：日志等级分为trance、debug、info、warn、error，严重等级以此提高，配置默认值为info，即只输出info等级及以后日志，可指定生效路径</li>
+<li>logging.path：指定写入日志的路径，默认生成项目根目录spring.log文件</li>
+<li>logging.file：指定写入日志的路径+文件名或直接写文件名，和logging.path类似，大多数用logging.path</li>
+<li>logging.pattern.console/file：指定控制台/文件的日志输出格式</li>
+</ul>
+</li>
+<li>xml配置方式：<ul>
+<li>spring boot也支持更精确的自定义日志配置，可以用xml形式实现，如指定配置环境等功能（略）</li>
+</ul>
+</li>
+</ol>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+
+    
+    <p>last update time 2019-02-17</p>
+    
+    
+        <a class="extend next post-next" href="/2018/09/17/nio总结/">next</a>
+    
+    </div>
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © Cli 2017 - 2019
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a> & <a href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+</div>
+    </div>
+</body>
+</html>
