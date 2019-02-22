@@ -56,69 +56,77 @@
         <h1 class="post-title">maven基本功能及使用</h1>
 <article class="post markdown-style">
   <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
-<li>maven是项目构建工具，可以干的事情比较多，但是在工作中常用到的功能基本上是构建项目，自带清理、编译、打包等功能；依赖的管理，POM文件中的一些配置，之前对这些只是简单会用，在这里对maven简单进行使用上的梳理。</li>
+<li>maven是项目构建工具，可以干的事情比较多，但是在工作中常用到的功能基本上是项目生命周期的管理，自带清理、编译、打包等功能；依赖的管理，POM文件中的一些配置；插件等；之前对这些只是简单会用，在这里对maven简单进行使用上的梳理。</li>
 </ol>
 <h2 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h2><ol>
-<li>setting.xml（maven基本配置文件）<br><ul>
-<li>文件读取：默认读取user/.m2/settings.xml，idea中使用内置maven，可做相关属性修改。</li>
-<li>常用配置：依赖下载到本地的仓库地址（localRepository）、依赖下载中心（mirrors）、其他可设置代理、私服配置等不常用，不多做说明</li>
+<li>约定优于配置：<ul>
+<li>maven提供了一套易于上手的项目文件规范，例如src、java、resources、target等文件应该放在哪里，怎么分层，只要遵守这个约定，使用maven就不用再单独进行其他繁琐的配置，也能更好规范项目。</li>
 </ul>
 </li>
-<li>pom.xml常用属性：<ul>
+<li>setting.xml（全局配置文件）<ul>
+<li>文件读取：默认读取user/.m2/settings.xml，idea中使用内置maven，可做相关属性修改。</li>
+<li>常用配置：依赖下载到本地的仓库地址（localRepository）、依赖下载中心（mirrors）、其他可设置代理、私服配置等</li>
+</ul>
+</li>
+<li>pom.xml基本配置（依赖关系及部分配置信息）：<ul>
 <li>grouuId：一般为“com.公司名”</li>
-<li>artifactId：一般为项目名</li>
+<li>artifactId：和grouuId组合唯一定位，一般为项目名</li>
 <li>version：版本号</li>
-<li>packaging：打包形式，默认jar</li>
+<li>packaging：打包形式，有pom、jar、war等，默认jar</li>
+<li>modules -&gt; module：声明父子项目关系</li>
 <li>properties：自定义变量</li>
-<li>dependencyManagement：一般存在父Pom里，其子项目用到相同的依赖，依然声明，但不用再做版本声明，以父Pom为准。</li>
-<li>dependency：声明依赖，引入依赖jar或者内部项目<ul>
-<li>scope：作用域。默认compile，这个属性的实质是在测试到发布的各个阶段过程中对依赖使用的管理，需要对依赖在什么阶段使用有理解。如果不清楚默认即可，默认的负面效果只是打包或编译、执行加入多余依赖。每个作用域的主要区别在于使用的阶段和这个阶段是否把依赖打入成品包或参加编译、执行。<ol>
-<li>compile：<ul>
-<li>阶段：所有</li>
-<li>效果：编译、执行并打入成品包中。</li>
+<li>dependencyManagement -&gt; dependencies -&gt; dependency：一般存在父Pom里，其子项目用到相同的依赖，依然声明dependencies，但可以不用再做版本声明，以父Pom为准，子Pom也可以声明版本进行覆盖。</li>
+<li>dependencies -&gt; dependency：内部也有grouuId、artifactId、version等标签，大部分是对引入依赖进行声明和管理，例如定位依赖，排除冲突依赖等。<ul>
+<li>scope：作用域。dependency的依赖不一定要在项目周期的各个阶段都使用到，有的阶段不希望把某个依赖引入，这时候需要设置scope（多依赖scope的继承关系：test和provided不会继承，其他继承）。<ol>
+<li>compile（默认）：<ul>
+<li>阶段：编译、测试、运行</li>
 <li>样例：大部分依赖都是</li>
 </ul>
 </li>
 <li>test：<ul>
 <li>阶段：测试</li>
-<li>效果：只有测试时期加入编译、执行</li>
-<li>样例：Junit</li>
+<li>样例：spring-test</li>
 </ul>
 </li>
 <li>runtime：<ul>
-<li>阶段：除编译之外</li>
-<li>效果：和compile对比，除编译之外其他相同</li>
-<li>样例：JDBC（不需编译）</li>
+<li>阶段：测试和运行</li>
 </ul>
 </li>
 <li>provided：<ul>
-<li>阶段：除打包之外</li>
-<li>效果：同上，只是不加入成品包</li>
+<li>阶段：编译和测试</li>
 </ul>
 </li>
 <li>system：<ul>
-<li>阶段：同privider</li>
-<li>效果：依赖不从maven仓库下载，直接本地定义</li>
-</ul>
-</li>
-<li>多项目scope的继承关系<ul>
-<li>test和provided不会继承，其他继承</li>
+<li>阶段：编译和测试</li>
+<li>效果：依赖不从maven仓库下载，本地寻找</li>
 </ul>
 </li>
 </ol>
+</li>
+<li>exclusions：排除依赖 </li>
+</ul>
+</li>
+<li>复杂继承关系下加载多版本依赖的原则：<ul>
+<li>最短路径原则：<ul>
+<li>如果有多个版本的依赖，按依赖路径最短的版本加载，如a依赖需要加载d依赖，d依赖有多个版本，a -&gt; b -&gt; d(1.1)，a -&gt; b -&gt; c -&gt; d(1.0)，最短路径是第一种，则加载1.1版本</li>
+</ul>
+</li>
+<li>加载顺序原则： <ul>
+<li>如果路径距离一致，按声明的先后顺序加载，先写的被加载。</li>
+</ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
 <li>maven生命周期：<ul>
-<li>每个生命周期中都有多个阶段（phase），每个阶段独立，但phase有先后顺序，而且后面的依赖于前面的phase，依次执行，如下三个生命周期<ul>
+<li>每个生命周期(lifecycle)中都有多个阶段（phase），每个阶段独立，但phase有先后顺序，而且后面的依赖于前面的phase，依次执行。每个phase又有多个可定义的插件目标(plugin goals)组成。三个lifecycle如下： <ul>
 <li>clean：清理上一次生成的文件</li>
 <li>default：核心，包括编译项目代码，测试代码，打包等一系列重要操作，用于构建项目</li>
 <li>site：生成相关文档等操作</li>
 </ul>
 </li>
-<li>maven允许将插件绑定到生命周期中如常用的打包工具maven-source-plugin，也可以对插件进行相关配置。<br>待续…</li>
+<li>maven允许将plugin绑定到lifecycle中如常用的打包工具maven-source-plugin，也可以对plugin进行相关配置。</li>
 </ul>
 </li>
 </ol>
