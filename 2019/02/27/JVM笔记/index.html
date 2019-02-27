@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
-  <title>JVM笔记 [ 李成的博客 ]</title>
+  <title>深入理解Java虚拟机笔记 [ 李成的博客 ]</title>
   
     <!-- stylesheets list from config.yml -->
     
@@ -53,9 +53,9 @@
 </div>
     </div>
     <div class="container">
-        <h1 class="post-title">JVM笔记</h1>
+        <h1 class="post-title">深入理解Java虚拟机笔记</h1>
 <article class="post markdown-style">
-  <h2 id="JVM的基础概念"><a href="#JVM的基础概念" class="headerlink" title="JVM的基础概念"></a>JVM的基础概念</h2><ol>
+  <h2 id="深入理解Java虚拟机笔记"><a href="#深入理解Java虚拟机笔记" class="headerlink" title="深入理解Java虚拟机笔记"></a>深入理解Java虚拟机笔记</h2><ol>
 <li>JVM：<ul>
 <li>Java语言具有跨平台的特性，配合Java虚拟机即可run everywhere，JVM主要功能有2个，一是把编译好的.class变成机器可识别的指令。二是对管理内存。</li>
 </ul>
@@ -74,6 +74,13 @@
 </li>
 </ul>
 </li>
+</ul>
+</li>
+<li>对象的创建过程<ul>
+<li>定位类的符号引用是否加载到常量池，否则加载类信息</li>
+<li>分配内存</li>
+<li>内存空间初始化</li>
+<li>设置对象头信息包括元数据、hash码、分代信息、锁等<br>初始化对象里的属性</li>
 </ul>
 </li>
 </ol>
