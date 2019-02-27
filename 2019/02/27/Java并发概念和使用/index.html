@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title>Java并发概念和使用 [ 李成的博客 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">Java并发概念和使用</h1>
+<article class="post markdown-style">
+  <h2 id="Java多线程基本概念"><a href="#Java多线程基本概念" class="headerlink" title="Java多线程基本概念"></a>Java多线程基本概念</h2><ol>
+<li>进程和线程的关系：<ul>
+<li>简单理解，一个进程可以有1个或多个线程，单个线程内顺序执行，多线程同时刻可认为是并发执行。</li>
+</ul>
+</li>
+<li>Java中的线程使用：<ul>
+<li>实现方式：<ul>
+<li>继承thread类</li>
+<li>实现runnable接口</li>
+</ul>
+</li>
+<li>PS：线程start()后，执行顺序不一定按照调用顺序执行。</li>
+</ul>
+</li>
+<li>线程安全：<ul>
+<li>问题：线程是否安全针对共享变量，多线程访问某个”共享变量”是否会出现非预期的变化，线程间独立的变量等不会受到影响。</li>
+<li>解决：锁是最常用的解决办法，例如synchronize，满足了并发安全的三个特性，原子、可见、互斥。</li>
+</ul>
+</li>
+<li>基本方法：<ul>
+<li>currentThread()：获取执行当前代码线程的信息</li>
+<li>isAlive()：判断当前线程是否在执行中</li>
+<li>sleep()：暂停线程执行，这个方法经常和Object类的wait()方法对比，他们都有停止线程执行的效果，后面写。</li>
+<li>interrupt()：中断线程，不一定能立即中断线程，只是标记为中断状态为true，等到一个可以中断的时机，这个时机比如循环中手动做一个逻辑判断，跳出循环；sleep时中断，会爆出中断异常等。</li>
+<li>interrupted()：返回中断标记，并复原标记状态。</li>
+<li>isInterrupt()：返回中断标记。</li>
+<li>stop()：暴力终止（Java已经建议停用了）</li>
+<li>yield()：让出CPU，执行其他任务，随机时间后继续执行，感觉就是一个随机暂停时间的sleep()。</li>
+<li>setPriority()：设置执行的优先级，1-10越高越有可能先执行，但也不是绝对的，只能保证大部分优先级高的先于优先级低的。</li>
+</ul>
+</li>
+<li>并发和JVM：<ul>
+<li>写到这…先去把JVM基本的写了…</li>
+</ul>
+</li>
+<li>synchronize：<br> * </li>
+</ol>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+        <a class="extend prev post-prev" href="/2019/02/27/JVM笔记/">prev</a>
+    
+
+    
+    <p>last update time 2019-02-27</p>
+    
+    
+        <a class="extend next post-next" href="/2019/02/17/Spring-Boot整理记录-1/">next</a>
+    
+    </div>
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © 李成 2017 - 2019
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a> & <a href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+</div>
+    </div>
+</body>
+</html>

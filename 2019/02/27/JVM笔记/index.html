@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <title>JVM笔记 [ 李成的博客 ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="/css/iLiKE.css">
+    
+  
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+    <div class="menu">
+      <div class="menu-left">
+        <a href="/">
+          <img src="/favicon.ico"></img>
+        </a>
+      </div>
+      <div class="menu-right">
+        
+          
+          
+          
+          
+          
+          
+          <a href="/">Home</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/archives">Archives</a>
+        
+          
+          
+          
+          
+          
+          
+          <a href="/about">About</a>
+        
+      </div>
+    </div>
+</div>
+    </div>
+    <div class="container">
+        <h1 class="post-title">JVM笔记</h1>
+<article class="post markdown-style">
+  <h2 id="JVM的基础概念"><a href="#JVM的基础概念" class="headerlink" title="JVM的基础概念"></a>JVM的基础概念</h2><ol>
+<li>JVM：<ul>
+<li>Java语言具有跨平台的特性，配合Java虚拟机即可run everywhere，JVM主要功能有2个，一是把编译好的.class变成机器可识别的指令。二是对管理内存。</li>
+</ul>
+</li>
+<li>运行时数据区：<ul>
+<li>线程间共享：<ul>
+<li>堆：最大的一块共享区域，GC的主要区域，主要目的是分配实例、数组。会根据回收器进行区域再细分。</li>
+<li>方法区：类信息、常量（final）、静态变量（static）等，运行时常量池也算在方法区中，存放编译期生成的字面量和符号引用。</li>
+</ul>
+</li>
+<li>线程间隔离：<ul>
+<li>程序计数器：每个线程都有一个独立的程序计数器，指向当前线程执行的字节码指令，并选取下一条指令，CPU分片间断执行线程指令时的标记。<ul>
+<li>虚拟机栈：遵循栈的基本结构，简单看成是数据入栈出栈，操作的过程。每个方法从调用直至完成的过程，就对应着一个栈帧在虚拟机栈中入栈到出栈的过程。局部变量表（存储基本数据类型、引用类型（指向堆）、returnAddress类型）、操作数栈（方法中用于运算数据暂存的栈）、动态链接、方法出口等等</li>
+<li>本地方法栈：类似于虚拟机栈，给native方法用的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+</article>
+
+    <div class="pagenator post-pagenator">
+    
+    
+
+    
+    <p>last update time 2019-02-27</p>
+    
+    
+        <a class="extend next post-next" href="/2019/02/27/Java并发概念和使用/">next</a>
+    
+    </div>
+
+    </div>
+    <div class="footer">
+        <div class="container">
+    <div class="copyright">
+        <span>
+            
+            
+            
+                © 李成 2017 - 2019
+            
+        </span>
+    </div>
+    <div class="power">
+        <span>
+            Powered by <a href="https://hexo.io">Hexo</a> & <a href="https://github.com/CaiChenghan/iLiKE">iLiKE Theme</a>
+        </span>
+    </div>
+</div>
+    </div>
+</body>
+</html>
