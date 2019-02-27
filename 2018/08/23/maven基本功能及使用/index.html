@@ -56,7 +56,7 @@
         <h1 class="post-title">maven基本功能及使用</h1>
 <article class="post markdown-style">
   <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ol>
-<li>maven是项目构建工具，可以干的事情比较多，但是在工作中常用到的功能基本上是项目生命周期的管理，自带清理、编译、打包等功能；依赖的管理，POM文件中的一些配置；插件等；之前对这些只是简单会用，在这里对maven简单进行使用上的梳理。</li>
+<li>maven是项目构建工具，可以干的事情比较多，但是在工作中常用到的功能基本上是项目生命周期的管理，自带清理、编译、打包等功能；依赖的管理，POM文件中的一些配置；插件等；之前对这些只是简单会用，在这里对maven简单进行梳理。</li>
 </ol>
 <h2 id="maven"><a href="#maven" class="headerlink" title="maven"></a>maven</h2><ol>
 <li>约定优于配置：<ul>
@@ -120,13 +120,17 @@
 </ul>
 </li>
 <li>maven生命周期：<ul>
-<li>每个生命周期(lifecycle)中都有多个阶段（phase），每个阶段独立，但phase有先后顺序，而且后面的依赖于前面的phase，依次执行。每个phase又有多个可定义的插件目标(plugin goals)组成。三个lifecycle如下： <ul>
-<li>clean：清理上一次生成的文件</li>
-<li>default：核心，包括编译项目代码，测试代码，打包等一系列重要操作，用于构建项目</li>
-<li>site：生成相关文档等操作</li>
+<li>每个生命周期(lifecycle)中都有多个阶段（phase），每个阶段独立，但phase有先后顺序，而且后面的依赖于前面的phase（如执行deploy会也会执行test、package、install等等phase），依次执行。每个phase又有多个可定义的插件目标(plugin goals)组成。三个lifecycle和对应phase如官方所示，<a href="http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference" target="_blank" rel="noopener">http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference</a></li>
+<li>maven允许将plugin绑定到lifecycle中，如常用的打包工具maven-source-plugin，也可以对plugin进行相关配置。</li>
 </ul>
 </li>
-<li>maven允许将plugin绑定到lifecycle中如常用的打包工具maven-source-plugin，也可以对plugin进行相关配置。</li>
+<li>常用命令：<ul>
+<li>compile：编译</li>
+<li>clean：清除target </li>
+<li>test：执行Junit/testNG</li>
+<li>package：test + 打包成pom里<packaging>指定的包类型 </packaging></li>
+<li>install：package + 打包并更新本地maven仓库</li>
+<li>deploy：install + 推送到远程私服 </li>
 </ul>
 </li>
 </ol>
@@ -140,7 +144,7 @@
     
 
     
-    <p>last update time 2019-02-22</p>
+    <p>last update time 2019-02-27</p>
     
     
         <a class="extend next post-next" href="/2018/08/21/spring-boot邮件功能（QQ，Gmail）/">next</a>
