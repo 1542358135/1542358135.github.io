@@ -71,7 +71,7 @@
 </li>
 <li>线程安全：<ul>
 <li>问题：线程是否安全针对共享变量，多线程访问某个”共享变量”是否会出现非预期的变化，线程间独立的变量等不会受到影响。</li>
-<li>解决：锁是最常用的解决办法，例如synchronize，满足了并发安全的三个特性，原子、可见、互斥。</li>
+<li>解决：锁是最常用的解决办法，例如synchronize，满足了并发安全的三个特性，原子、可见、不被重排。</li>
 </ul>
 </li>
 <li>基本方法：<ul>
@@ -86,8 +86,8 @@
 <li>setPriority()：设置执行的优先级，1-10越高越有可能先执行，但也不是绝对的，只能保证大部分优先级高的先于优先级低的。</li>
 </ul>
 </li>
-<li>并发和JVM：<ul>
-<li>写到这…先去把JVM基本的写了…</li>
+<li>Java内存模型和线程：<ul>
+<li>这个问题</li>
 </ul>
 </li>
 <li>synchronize：<br> * </li>
@@ -102,7 +102,7 @@
     
 
     
-    <p>last update time 2019-02-27</p>
+    <p>last update time 2019-02-28</p>
     
     
         <a class="extend next post-next" href="/2019/02/17/Spring-Boot整理记录-1/">next</a>
