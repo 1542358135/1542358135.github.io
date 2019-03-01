@@ -55,7 +55,7 @@
     <div class="container">
         <h1 class="post-title">Java并发概念和使用</h1>
 <article class="post markdown-style">
-  <h2 id="Java多线程基本概念"><a href="#Java多线程基本概念" class="headerlink" title="Java多线程基本概念"></a>Java多线程基本概念</h2><ol>
+  <h2 id="Java线程基本概念"><a href="#Java线程基本概念" class="headerlink" title="Java线程基本概念"></a>Java线程基本概念</h2><ol>
 <li>进程和线程的关系：<ul>
 <li>简单理解，一个进程可以有1个或多个线程，单个线程内顺序执行，多线程同时刻可认为是并发执行。</li>
 </ul>
@@ -69,11 +69,7 @@
 <li>PS：线程start()后，执行顺序不一定按照调用顺序执行。</li>
 </ul>
 </li>
-<li>线程安全：<ul>
-<li>什么是线程安全：Java虚拟机13章中的一句话”当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要额外的同步，或者在调用方任何其他的协调操作，调用这个对象的行为都可以获取正确的结果，那这个对象时线程安全的”。</li>
-</ul>
-</li>
-<li>基本方法：<ul>
+<li>线程的基本使用：<ul>
 <li>currentThread()：获取执行当前代码线程的信息</li>
 <li>isAlive()：判断当前线程是否在执行中</li>
 <li>sleep()：暂停线程执行，这个方法经常和Object类的wait()方法对比，他们都有停止线程执行的效果，后面写。</li>
@@ -86,7 +82,11 @@
 </ul>
 </li>
 </ol>
-<h2 id="Java内存模型（JMM）和线程"><a href="#Java内存模型（JMM）和线程" class="headerlink" title="Java内存模型（JMM）和线程"></a>Java内存模型（JMM）和线程</h2><ol start="5">
+<h2 id="Java内存模型（JMM）和线程"><a href="#Java内存模型（JMM）和线程" class="headerlink" title="Java内存模型（JMM）和线程"></a>Java内存模型（JMM）和线程</h2><ol>
+<li>线程安全：<ul>
+<li>什么是线程安全：Java虚拟机13章中的一句话”当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要额外的同步，或者在调用方任何其他的协调操作，调用这个对象的行为都可以获取正确的结果，那这个对象时线程安全的”。</li>
+</ul>
+</li>
 <li>Java内存模型和线程：<ul>
 <li>PS：这个问题在深入理解Java虚拟机第12 13章有详细说明，涉及到了一些硬件不是很熟，这里只带过一些并发中涉及的概念。</li>
 <li>硬件的效率优化：<ul>
@@ -96,7 +96,7 @@
 </li>
 <li>Java内存模型（JMM）：<ul>
 <li>主内存（Main Memory）：所有的变量都存在主内存，可以理解为堆的对象实例数据，但并不一样。</li>
-<li>工作内存（Working Memory）：每个线程会有自己的工作内存，Working Memory是高速缓存和寄存器的抽象。工作内存保存了对应线程使用主存变量的副本，处理后Save回主存。</li>
+<li>工作内存（Working Memory）：每个线程会有自己的工作内存，Working Memory是高速缓存和寄存器的抽象。工作内存保存了对应线程使用主存变量的副本，处理后保存回主存。</li>
 </ul>
 </li>
 <li>内存间交互操作：<ul>
@@ -104,14 +104,24 @@
 </ul>
 </li>
 <li>原子性、可见性、有序性<ul>
-<li>原子性：内存间交互一般可以保证基本数据类型的访问读写都是原子性的，但很多情况需要更大范围的原子性保证，这时用到了命令中的lock和unlock，如Java中的synchronize</li>
-<li>可见性：当共享变量被写回时，即在其他工作内存中也存在该变量的副本，就会发出信号通知其他工作内存将该变量的缓存行设置为无效状态。当其他工作内存使用这个变量时，发现这个变量无效时，会从新从内存中读取这个变量（volatile的作用）。</li>
-<li>有序性：防止指令重排导致的问题</li>
+<li>原子性：内存间交互一般可以保证基本数据类型的访问读写都是原子性的，但很多情况需要更大范围的原子性保证（例如常见的多步骤操作），这时用到了命令中的lock和unlock，Java中提供了monitor的概念实现lock和unlock，代码中常用的就是synchronize</li>
+<li>可见性：共享变量被写回主存时，在其他工作内存如果有副本（如果没有拿到是最新的），就会发出信号通知其他工作内存将该变量的缓存行设置为无效状态。当其他工作内存使用这个变量时，发现这个变量无效时，会从新从内存中读取这个变量Java中synchronize、volatile可实现。</li>
+<li>有序性：防止指令重排导致的问题（volatile、synchronize）</li>
 </ul>
 </li>
 </ul>
 </li>
-<li>synchronize：<br> * </li>
+</ol>
+<h2 id="Java线程同步"><a href="#Java线程同步" class="headerlink" title="Java线程同步"></a>Java线程同步</h2><ol>
+<li>按不同纬度分类的锁：</li>
+<li>synchronize：</li>
+<li>volatile：</li>
+</ol>
+<h2 id="Java线程间通讯"><a href="#Java线程间通讯" class="headerlink" title="Java线程间通讯"></a>Java线程间通讯</h2><h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ol start="8">
+<li>Atomic：</li>
+<li>ReentrantLock：</li>
+<li>CAS：</li>
+<li>线程池：</li>
 </ol>
 
 </article>

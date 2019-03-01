@@ -111,6 +111,11 @@
 <li>直接内存溢出：allocateMemory分配内存过多</li>
 </ul>
 </li>
+<li>代码中声明变量的执行过程：<ul>
+<li>Stirng a = “hello”：a会在栈申请空间，字面量”hello”放到运行时常量池，且常量池中”hello”只有一个，a指向常量池的”hello”。</li>
+<li>Stirng b = new String(“hello”)：a在栈申请空间，堆中生成一个新对象，a指向堆种的对象，这里有一个intern()可以把数据放到常量池中，并把a指向常量池中的”hello”，这时如果和上面的a判断”==”，就是true了（”==”比较引用地址，”equals()”比较数据内容）。</li>
+</ul>
+</li>
 </ol>
 <h2 id="第三章-垃圾回收器与内存分配策略"><a href="#第三章-垃圾回收器与内存分配策略" class="headerlink" title="第三章 垃圾回收器与内存分配策略"></a>第三章 垃圾回收器与内存分配策略</h2><ol>
 <li>概述：<ul>
@@ -232,7 +237,7 @@
     
 
     
-    <p>last update time 2019-02-28</p>
+    <p>last update time 2019-03-01</p>
     
     
         <a class="extend next post-next" href="/2019/02/27/Java并发概念和使用/">next</a>
