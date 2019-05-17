@@ -109,7 +109,7 @@
 <li><p>阻塞IO Bio（即Java中的基本IO）</p>
 <ul>
 <li><p>同步阻塞。之前详细描述的BIO，启动服务端，建立连接，这时服务端和客户端都有一个单独的线程专门负责通讯，客户端触发发送，线程阻塞，服务端等待数据到达，复制到用户空间，串行阻塞执行，服务端响应数据，客户端接收后继续执行，这种执行方式高并发效率很低，程序可通过创建和连接数1:1的线程达到并发的目的，并发量不大时足以满足要求，和NIO各有适用的环境。</p>
-<p><img src="nio总结/qwzn1_1.png" alt="BP"></p>
+<p><img src="https://1542358135.github.io/2018/09/17/nio总结/qwzn1_1.png" alt="BP"></p>
 </li>
 </ul>
 </li>
@@ -121,7 +121,7 @@
 <li><p>多路复用IO（Java中的NIO）</p>
 <ul>
 <li><p>同步非阻塞。BIO在多连接高并发的情况下肯定不合适，上面提到了轮询可以实现非阻塞，但是单独创建对应线程无限轮询，虽然是没阻塞，但是看起来好像和阻塞区别也不是很大，线程创建的压力也很重，那有没有办法用一个线程监控多个连接，一次轮询每个连接都访问一遍，这个东西就是selector，selector轮询监听channel的动作（读、写等），把准备好的连接集合返回，没有就绪的就等待下次轮询。</p>
-<p><img src="nio总结/qwzn1_3.png" alt="BP"></p>
+<p><img src="https://1542358135.github.io/2018/09/17/nio总结/qwzn1_3.png" alt="BP"></p>
 </li>
 </ul>
 </li>
@@ -133,7 +133,7 @@
 <li><p>异步IO（AIO）</p>
 <ul>
 <li><p>异步IO。AIO需要内核深度合作，发起流程后立即返回，等待内核完成检查数据，复制到用户空间等一系列操作，回调用户，执行完毕。</p>
-<p><img src="nio总结/qwzn1_4.png" alt="BP"></p>
+<p><img src="https://1542358135.github.io/2018/09/17/nio总结/qwzn1_4.png" alt="BP"></p>
 </li>
 </ul>
 </li>
@@ -197,7 +197,7 @@
     
 
     
-    <p>last update time 2019-05-16</p>
+    <p>last update time 2019-05-18</p>
     
     
         <a class="extend next post-next" href="/2018/09/12/spring-boot下Tomcat使用阿里云免费ssl证书/">next</a>
