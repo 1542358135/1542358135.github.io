@@ -185,7 +185,7 @@
 <li>CMS（Concurrent Mark Sweep）：并发收集器，以GC最短停顿时间为目标的收集器，标记 - 清除算法<ul>
 <li>流程：<ul>
 <li>初始标记：暂停，标记Roots直接关联的对象（速度很快）</li>
-<li>并发标记：并发，进行CG Roots追踪，并标记（并发执行，所以不会暂停）</li>
+<li>并发标记：并发，进行Roots追踪，并标记（并发执行，所以不会暂停）</li>
 <li>重新标记：暂停，对并发期间的操作对象重新修正（速度较快）</li>
 <li>并发清除：并发，清理（并发执行）</li>
 </ul>
@@ -235,9 +235,11 @@
     <div class="pagenator post-pagenator">
     
     
+        <a class="extend prev post-prev" href="/2019/05/16/数据库缓存一致性问题记录/">prev</a>
+    
 
     
-    <p>last update time 2019-03-01</p>
+    <p>last update time 2019-03-03</p>
     
     
         <a class="extend next post-next" href="/2019/02/27/Java并发概念和使用/">next</a>

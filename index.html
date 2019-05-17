@@ -61,6 +61,36 @@
     
       <div class="article-item">
         <h2 class="article-item-header">
+          <a href="/2019/05/16/数据库缓存一致性问题记录/">
+            数据库缓存一致性问题记录
+          </a>
+        </h2>
+        <div class="article-item-content">
+          
+            <p>前言
+今天偶然看到了一篇关于数据库缓存一致性的博客，想起来了之前做过的业务有相似的处理，这里简单回顾一下思路。
+
+正文
+缓存的IO速度要大于磁盘IO
+
+缓存数据虽然有持久化机制但还是不能完全确保数据不丢，不如磁盘稳定
+
+
+
+一般情况下把热数据缓存，这也是Redis这些工具的常见用法，查询操作时可以先...</p>
+          
+        </div>
+        <div class="atricle-item-time">
+          
+            <span>
+              2019-05-16
+            </span>
+          
+        </div>
+      </div>
+    
+      <div class="article-item">
+        <h2 class="article-item-header">
           <a href="/2019/02/27/深入理解Java虚拟机笔记/">
             深入理解Java虚拟机笔记
           </a>
@@ -96,7 +126,7 @@ Java语言具有跨平台的特性，配合Java虚拟机即可run everywhere，J
         </h2>
         <div class="article-item-content">
           
-            <p>Java线程基本概念
+            <p>Java线程基本概念总结
 进程和线程的关系：
 简单理解，一个进程可以有1个或多个线程，单个线程内顺序执行，多线程同时刻可认为是并发执行。
 
@@ -110,7 +140,7 @@ Java中的线程使用：
 PS：线程start()后，执行顺序不一定按照调用顺序执行。
 
 
-线程的基本...</p>
+线程的...</p>
           
         </div>
         <div class="atricle-item-time">
@@ -152,9 +182,7 @@ PS：线程start()后，执行顺序不一定按照调用顺序执行。
         <div class="article-item-content">
           
             <p>前言
-之前一年半一直在做通信、netty相关工作，本篇博客根据《netty权威指南》和自身工作经验总结nio相关知识点。异步AIO带过不多涉及，netty也暂时没有AIO支持，也就侧面证实AIO在高并发io情境下并不会比现在的NIO更好，以下大部分并发场景均为面向连接的通讯协议，例如TCP。
-
-基本...</p>
+之前一年半除了基本业务外一直在做通信、netty相关工作，现在回想一下学习通讯确实很有用，为后面学习RPC、spring cloud、参与开源项目等等都打了很好的基础，这篇博客根据《netty权威指南》和一些工作上的经验总结NIO相关知识点。AIO了解不多，netty也暂时没有AIO支持，也就...</p>
           
         </div>
         <div class="atricle-item-time">
@@ -175,13 +203,13 @@ PS：线程start()后，执行顺序不一定按照调用顺序执行。
         <div class="article-item-content">
           
             <p>前言
-最近帮朋友做了一个项目，其中遇到了需要申请ssl，最后还是选择了阿里云的免费ssl证书，因为域名也是在阿里云，在申请ssl时会比较方便。
+最近待业在家，帮朋友做了一个有支付和视频模块的项目，用到了第三方服务，都需要HTTPS，最后去阿里云申请了免费的ssl证书，因为域名也是在阿里云，申请时很方便。
 
 准备
 申请域名（这篇博客侧重证书申请，域名方面略过）
 阿里云申请免费ssl证书
 在阿里的产品搜索中搜索“ssl免费证书”
-在Symantec品牌下，会有一...</p>
+在Sym...</p>
           
         </div>
         <div class="atricle-item-time">

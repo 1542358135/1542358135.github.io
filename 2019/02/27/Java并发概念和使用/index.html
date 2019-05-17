@@ -55,7 +55,7 @@
     <div class="container">
         <h1 class="post-title">Java并发概念和使用</h1>
 <article class="post markdown-style">
-  <h2 id="Java线程基本概念"><a href="#Java线程基本概念" class="headerlink" title="Java线程基本概念"></a>Java线程基本概念</h2><ol>
+  <h2 id="Java线程基本概念总结"><a href="#Java线程基本概念总结" class="headerlink" title="Java线程基本概念总结"></a>Java线程基本概念总结</h2><ol>
 <li>进程和线程的关系：<ul>
 <li>简单理解，一个进程可以有1个或多个线程，单个线程内顺序执行，多线程同时刻可认为是并发执行。</li>
 </ul>
@@ -113,7 +113,12 @@
 </li>
 </ol>
 <h2 id="Java线程同步"><a href="#Java线程同步" class="headerlink" title="Java线程同步"></a>Java线程同步</h2><ol>
-<li>锁按不同特性的分类：</li>
+<li>锁按不同特性的分类：<ul>
+<li>公平/非公平：获取锁的顺序是否和申请锁的顺序一致，先申请的先获取到锁就是公平，否则就是非公平。</li>
+<li>乐观锁/悲观锁：悲观锁就是正常理解的锁，即同一时刻只能有一个线程执行。乐观锁其实是没有锁，通过和原value对比，如果一致则更新，不一致则不断重试执行的方式执行任务。</li>
+<li></li>
+</ul>
+</li>
 <li>synchronize：</li>
 <li>volatile：</li>
 </ol>
@@ -133,7 +138,7 @@
     
 
     
-    <p>last update time 2019-03-01</p>
+    <p>last update time 2019-05-18</p>
     
     
         <a class="extend next post-next" href="/2019/02/17/Spring-Boot整理记录-1/">next</a>
