@@ -56,7 +56,7 @@
         <h1 class="post-title">nio总结</h1>
 <article class="post markdown-style">
   <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
-<li>之前一年半除了基本业务外一直在做通信、netty相关工作，现在回想一下学习通讯确实很有用，为后面学习RPC、spring cloud、参与开源项目等等都打了很好的基础，这篇博客根据《netty权威指南》和一些工作上的经验总结NIO相关知识点。AIO了解不多，netty也暂时没有AIO支持，也就侧面证实AIO在高并发IO情境下并不会比现在的NIO更好，以下大部分并发场景默认为面向连接的通讯协议，例如TCP。个人理解欢迎指正。</li>
+<li>之前一年半除了基本业务外一直在做通信、netty相关工作，现在回想一下学习通讯确实很有用，为后面学习RPC、spring cloud等等很多东西都打了很好的基础，这篇博客根据《netty权威指南》和一些工作上的经验总结NIO相关知识点。AIO了解不多，netty也暂时没有AIO支持，也就侧面证实AIO在高并发IO情境下并不会比现在的NIO更好，以下大部分并发场景默认为面向连接的通讯协议，例如TCP。个人理解欢迎指正。</li>
 </ul>
 <h2 id="基本Linux-IO模型"><a href="#基本Linux-IO模型" class="headerlink" title="基本Linux IO模型"></a>基本Linux IO模型</h2><ol start="2">
 <li><p>相关概念：</p>
@@ -183,10 +183,8 @@
 </li>
 </ul>
 </li>
-<li><p>reactor模式</p>
-<p>* </p>
-</li>
 </ol>
+<p>总结：本来写这篇博客打算是概括总结一下学习NIO中的知识点，可能因为写博客还不是很熟练，写到后面发现很多知识点一篇博客不太容易能说清，说清楚一点博客又会变得很长，后续打算把一些概念例如buffer、channel、selector单独写一篇博客尽量能写的清除。</p>
 
 </article>
 
@@ -197,7 +195,7 @@
     
 
     
-    <p>last update time 2019-05-18</p>
+    <p>last update time 2019-05-19</p>
     
     
         <a class="extend next post-next" href="/2018/09/12/spring-boot下Tomcat使用阿里云免费ssl证书/">next</a>

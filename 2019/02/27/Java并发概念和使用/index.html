@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
-  <title>Java并发概念和使用 [ 李成的博客 ]</title>
+  <title>Java线程基本概念和使用 [ 李成的博客 ]</title>
   
     <!-- stylesheets list from config.yml -->
     
@@ -53,80 +53,156 @@
 </div>
     </div>
     <div class="container">
-        <h1 class="post-title">Java并发概念和使用</h1>
+        <h1 class="post-title">Java线程基本概念和使用</h1>
 <article class="post markdown-style">
-  <h2 id="Java线程基本概念总结"><a href="#Java线程基本概念总结" class="headerlink" title="Java线程基本概念总结"></a>Java线程基本概念总结</h2><ol>
-<li>进程和线程的关系：<ul>
-<li>简单理解，一个进程可以有1个或多个线程，单个线程内顺序执行，多线程同时刻可认为是并发执行。</li>
+  <h2 id="Java内存模型（JMM）和线程"><a href="#Java内存模型（JMM）和线程" class="headerlink" title="Java内存模型（JMM）和线程"></a>Java内存模型（JMM）和线程</h2><ol>
+<li>并发的理解<ul>
+<li>CPU的运算速度很快，但数据的传输，存储速度会很大程度上拖累CPU的运算，这种情况下CPU大部分时间都是在等待，如果想充分利用CPU就需要通过调度，同时处理多个任务，让CPU不停的工作</li>
 </ul>
 </li>
-<li>Java中的线程使用：<ul>
-<li>实现方式：<ul>
+<li>Java内存模型和线程（涉及到硬件不太熟，简单带过一些概念）：<ul>
+<li>硬件的效率优化：<ul>
+<li>问题在哪：CPU的处理速度和内存的速度差距很大，解决办法就是在两者之间加入能尽量和CPU速度接近的缓存(cache)做中转，使用时的数据放入缓存，处理后同步回内存，大部分CPU还会有多级缓存。</li>
+<li>CPU和高速缓存：每个CPU有自己的高速缓存，但内存是共享的，同时处理同一内存数据就出现了不一致，用缓存一致性协议可以解决，<strong>内存模型可以理解为，内存或高速缓存读写访问过程的抽象</strong>。</li>
+<li>指令重排：为了提高效率，处理指令可能被乱序处理，只会保证结果和顺序处理一致。但如果计算任务依赖其他任务的中间结果，就有可能出问题，这也是保证并发三种特性中的顺序性问题的根源。</li>
+</ul>
+</li>
+<li>Java内存模型（JMM）：<ul>
+<li>JMM：Java定义的一种可以屏蔽掉硬件和操作系统内存访问差异的内存模型，主要用处是定义虚拟机中变量存取的底层细节。</li>
+<li>主内存（Main Memory）：所有变量都存储在主内存，类比物理内存，虚拟机内存的一部分。</li>
+<li>工作内存（Working Memory）：每个线程会有自己的工作内存，Working Memory存储于高速缓存和寄存器的抽象。工作内存保存了被该线程使用到的变量的主内存副本拷贝，读写只能通过工作内存，处理后保存回主内存。</li>
+</ul>
+</li>
+<li>JMM内存间交互操作：<ul>
+<li>简单说分为对主存数据的操作和工作内存数据的操作<ul>
+<li>主存：锁定(lock)：线程独占、解锁(unlock)、读取(read)：传到工作内存，随后load、写入(write)：放回主存；</li>
+<li>工作内存：载入(load)：主存的变量放入工作内存副本、使用(use )：传递给执行引擎、赋值(assign)：执行引擎给回工作内存、存储(store)：传回主存，随后write。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>原子性、可见性、有序性<ul>
+<li>原子性：内存间交互可以保证数据的读、写都是原子性的，但很多情况需要更大范围的原子性保证（例如读 + 写这种多步骤操作），这时用到了命令中的lock和unlock，Java中提供了monitor的概念实现了对数据的lock和unlock，代码中常用的就是synchronize</li>
+<li>可见性：变量被写回主存时，在其他工作内存如果有副本，就会发出信号通知其他工作内存将该变量的缓存行设置为无效状态。当其他工作内存使用这个变量时，发现这个变量无效时，会从新从内存中读取这个变量（synchronize、volatile）。</li>
+<li>有序性：通过内存屏障操作，防止该操作前后指令重排导致的问题（synchronize、volatile）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>线程安全：<ul>
+<li>什么是线程安全：《深入理解Java虚拟机》13章中的一句话”<strong>当多个线程</strong>访问<strong>一个对象</strong>时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要额外的同步，或者在调用方任何其他的协调操作，调用这个对象的行为都可以获取正确的结果，那这个对象时线程安全的”。</li>
+</ul>
+</li>
+</ol>
+<h2 id="Java线程基本操作"><a href="#Java线程基本操作" class="headerlink" title="Java线程基本操作"></a>Java线程基本操作</h2><ol>
+<li>Java中线程的实现方式：<ul>
 <li>继承thread类</li>
 <li>实现runnable接口</li>
 </ul>
 </li>
-<li>PS：线程start()后，执行顺序不一定按照调用顺序执行。</li>
-</ul>
-</li>
-<li>线程的基本使用：<ul>
+<li>线程的基本方法：<ul>
 <li>currentThread()：获取执行当前代码线程的信息</li>
 <li>isAlive()：判断当前线程是否在执行中</li>
 <li>sleep()：暂停线程执行，这个方法经常和Object类的wait()方法对比，他们都有停止线程执行的效果，后面写。</li>
 <li>interrupt()：中断线程，不一定能立即中断线程，只是标记为中断状态为true，等到一个可以中断的时机，这个时机比如循环中手动做一个逻辑判断，跳出循环；sleep时中断，会爆出中断异常等。</li>
 <li>interrupted()：返回中断标记，并复原标记状态。</li>
 <li>isInterrupt()：返回中断标记。</li>
-<li>stop()：暴力终止（Java已经建议停用了）</li>
+<li>stop()：暴力终止（已经建议停用了）</li>
 <li>yield()：让出CPU，执行其他任务，随机时间后继续执行，感觉就是一个随机暂停时间的sleep()。</li>
 <li>setPriority()：设置执行的优先级，1-10越高越有可能先执行，但也不是绝对的，只能保证大部分优先级高的先于优先级低的。</li>
 </ul>
 </li>
 </ol>
-<h2 id="Java内存模型（JMM）和线程"><a href="#Java内存模型（JMM）和线程" class="headerlink" title="Java内存模型（JMM）和线程"></a>Java内存模型（JMM）和线程</h2><ol>
-<li>线程安全：<ul>
-<li>什么是线程安全：Java虚拟机13章中的一句话”当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要额外的同步，或者在调用方任何其他的协调操作，调用这个对象的行为都可以获取正确的结果，那这个对象时线程安全的”。</li>
-</ul>
-</li>
-<li>Java内存模型和线程：<ul>
-<li>PS：这个问题在深入理解Java虚拟机第12 13章有详细说明，涉及到了一些硬件不是很熟，这里只带过一些并发中涉及的概念。</li>
-<li>硬件的效率优化：<ul>
-<li>CPU和高速缓存：由于CPU和存储设备的处理速度差距较大，加入了高速缓存作为两者间的缓冲，问题是每个CPU有自己的高速缓存，但是内存又是共享的，就出现了副本不一致，用现对应的读取协议解决。</li>
-<li>指令重排：为了使处理器内部的运算单元会尽可能充分利用，对处理的指令可能被乱序处理，只会保证结果一致。所以如果存在计算任务间的依赖，代码并不能保证顺序，这也是保证并发问题三种特性中的顺序性问题的根源。</li>
-</ul>
-</li>
-<li>Java内存模型（JMM）：<ul>
-<li>主内存（Main Memory）：所有的变量都存在主内存，可以理解为堆的对象实例数据，但并不一样。</li>
-<li>工作内存（Working Memory）：每个线程会有自己的工作内存，Working Memory是高速缓存和寄存器的抽象。工作内存保存了对应线程使用主存变量的副本，处理后保存回主存。</li>
-</ul>
-</li>
-<li>内存间交互操作：<ul>
-<li>简单说分为对主存数据的操作和工作内存数据的操作，主存数据可锁定（lock）、解锁（unlock）、读取到工作内存、放回主存；工作内存可载入、使用、赋值、存储。</li>
-</ul>
-</li>
-<li>原子性、可见性、有序性<ul>
-<li>原子性：内存间交互一般可以保证基本数据类型的访问读写都是原子性的，但很多情况需要更大范围的原子性保证（例如常见的多步骤操作），这时用到了命令中的lock和unlock，Java中提供了monitor的概念实现lock和unlock，代码中常用的就是synchronize</li>
-<li>可见性：共享变量被写回主存时，在其他工作内存如果有副本（如果没有拿到是最新的），就会发出信号通知其他工作内存将该变量的缓存行设置为无效状态。当其他工作内存使用这个变量时，发现这个变量无效时，会从新从内存中读取这个变量Java中synchronize、volatile可实现。</li>
-<li>有序性：防止指令重排导致的问题（volatile、synchronize）</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
 <h2 id="Java线程同步"><a href="#Java线程同步" class="headerlink" title="Java线程同步"></a>Java线程同步</h2><ol>
+<li>锁的个人理解：<ul>
+<li>线程安全总结就是多个线程访问同个共享对象，希望可以得到和单线程执行相同的理想结果，如果不安全可能因为线程操作的缓存不一致导致数据被覆盖等等情况。</li>
+<li>锁能达到线程同步（即可控的执行的顺序）效果，是解决问题最直接的方式，即满足了原子性、可见性、有序性，synchronize和ReentrantLock算Java中最常用的。</li>
+<li>锁是同步的，意味着狭义的锁同时刻只有一个线程在执行任务，执行效率会很低。例如某些读取共享变量场景可以通过volatile解决、自旋重试也是一种提高效率的方式。</li>
+</ul>
+</li>
 <li>锁按不同特性的分类：<ul>
 <li>公平/非公平：获取锁的顺序是否和申请锁的顺序一致，先申请的先获取到锁就是公平，否则就是非公平。</li>
-<li>乐观锁/悲观锁：悲观锁就是正常理解的锁，即同一时刻只能有一个线程执行。乐观锁其实是没有锁，通过和原value对比，如果一致则更新，不一致则不断重试执行的方式执行任务。</li>
-<li></li>
+<li>乐观锁/悲观锁：悲观锁就是正常理解的锁，即同一时刻只能有一个线程独占执行。乐观锁没有独占操作，通过自旋重试的方式处理。</li>
+<li>可重入/不可重入：可重入是线程获取到了一个锁，也可以访问同个锁锁住的其他代码，反之就是不可重入</li>
 </ul>
 </li>
-<li>synchronize：</li>
-<li>volatile：</li>
-</ol>
-<h2 id="Java线程间通讯"><a href="#Java线程间通讯" class="headerlink" title="Java线程间通讯"></a>Java线程间通讯</h2><h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ol start="8">
-<li>Atomic：</li>
-<li>ReentrantLock：</li>
-<li>CAS：</li>
-<li>线程池：</li>
+<li>synchronized：<ul>
+<li>特性：非公平、悲观锁、可重入</li>
+<li>功能：满足synchronized范围内的原子性、可见性、有序性</li>
+<li>使用：<ul>
+<li>分两种情况，类锁和对象锁。</li>
+<li>每个对象关联一个锁(monitor)，一个线程获取锁后不可以被其他线程获取到</li>
+<li>类本身也可以看成一个对象，每个类new的对象(this)都是单独一个对象锁，对象锁的对象也可以是Object等等。</li>
+<li>类锁常见用法：synchronized(Class)、静态方法声明</li>
+<li>对象锁常见用法：synchronized(this)、synchronized(? extends Object)</li>
+</ul>
+</li>
+<li>monitor的理解：<ul>
+<li>Java对象头里会有一个指向monitor的字段，monitor记录了锁的持有线程、等待获取的线程等信息，synchronized对monitor的操作间接完成线程对锁的争夺、释放</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>volatile：<ul>
+<li>volatile：volatile不算锁，和锁类似的地方只是volatile能解决并发特性中除了原子性的其他两个，所以volatile比锁的局限性会大，但效率会高。</li>
+<li>功能：解决了可见性和有序性的问题，太深层的东西感觉意义并不是很大，描述两个例子。<ul>
+<li>可见性：两个线程同时操作一个变量flag，thread1开启后循环访问flag，然后thread2修改flag，如果flag没有添加volatile关键字，thread1可能不会及时发现flag已改变，thread1还在持续访问自己工作内存的副本flag，加入volatile后可以及时看到变化，原理详见可见性描述。</li>
+<li>有序性：双检锁单例中用到了volatile，就是经典的有序性，代码就不贴了，两次判空初始化单例对象，内部判空前加锁防止多线程重复初始化，初始化对象singleton = new Singleton();时内部分为三个操作，1.singleton分配空间，2.初始化Singleton()，3.singleton指向Singleton对象，其中2和3可能会出现顺序颠倒，这样一个线程初始化singleton时执行3，另一线程判空会返回false有可能会返回空对象。</li>
+</ul>
+</li>
+<li>使用：除了上面的双检锁单例，在并发包中很常见，很多非原子性并发的地方会用到，例如atomic等</li>
+</ul>
+</li>
+<li>CAS：<ul>
+<li>compare and swap：比较并交换。</li>
+<li>功能：原子性可以靠锁解决，但锁大大降低了执行效率，CAS就是一种非锁的解决方式解决原子性问题。内存位置（V）、预期原值（A）和操作后的值(B)。如果V与A相等，那么执行后会把V更新为B 。否则，返回失败。失败后常见的就是自旋重试，直到操作成功，unsafe的compareAndSwapInt并没有实现自旋，需要手动实现。CAS只能保持原子性，所以常需要配合volatile一起使用。</li>
+<li>ABA问题：CAS有个问题，就是虽然操作前后内存中值相等，但是有可能内存被操作过多次之后又变成了原值，有情况会出问题，所以提供了另一个方法AtomicStampedReference.compareAndSet()，加上版本校验就可以了，严格说这个应该算在Atomic里。</li>
+</ul>
+</li>
+<li>Atomic：<ul>
+<li>Atomic：CAS + volatile封装好的例子，开箱即用。</li>
+<li>功能：Atomic提供了基本类型、数组等等类型的线程安全操作，最常见的i++并不是原子性操作，内部分为三步，取值(主存-&gt;工作内存)，操作(+1)，存储(工作内存 -&gt; 主存)，这时候就可以用AtomicInteger.getAndIncrement()实现。</li>
+</ul>
+</li>
+<li>ReentrantLock：<ul>
+<li>特性：功能上和synchronized都是锁，但更灵活，可重入，悲观锁，支持公平和非公平两种</li>
+<li>和synchronized对比：<ul>
+<li>synchronized是关键字，ReentrantLock是类</li>
+<li>synchronized执行完成后自动释放，ReentrantLock需要手动释放</li>
+<li>synchronized未获取锁会阻塞获取，ReentrantLock可以实现未获取锁直接返回</li>
+<li>synchronized和ReentrantLock实现原理上也有很大区别，这里就不多说了</li>
+</ul>
+</li>
+<li>使用：最明显的就是上锁lock.lock()、释放lock.unlock()，一般保证锁必须被释放，把unlock()写在finally中，ReentrantLock提供了很多其他功能，我自己在工作中也很少用到，所以就不细说了。</li>
+</ul>
+</li>
+<li>线程池：<ul>
+<li>线程池：和线程功能相同，实现了线程的可复用、管理</li>
+<li>工作流程：<ul>
+<li>接到任务，查看核心线程数是否已满，没满就创建任务线程，否则下一步</li>
+<li>查看队列是否已满，没满就加入队列，等待核心线程执行完并加入，否则下一步</li>
+<li>查看最大线程数是否已满，没满创建线程任务，否则执行拒绝策略</li>
+</ul>
+</li>
+<li>拒绝策略（可自定义）：<ul>
+<li>AbortPolicy：抛异常</li>
+<li>DiscardPolicy：丢弃任务</li>
+<li>DiscardOldestPolicy：抛弃队列头的任务，并加入该任务</li>
+<li>CallerRunsPolicy：在调用者线程中执行</li>
+</ul>
+</li>
+<li>四种线程池的使用：<ul>
+<li>SingleThreadPool：单个线程的线程池</li>
+<li>FixedThreadPool：固定线程的线程池</li>
+<li>CachedThreadPool：缓存线程的线程池</li>
+<li>ScheduledThreadPool：延迟队列的线程池</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CountDownLatch、CyclicBarrier、semaphore</li>
+<li>Threadlocal：</li>
+<li>AQS：</li>
 </ol>
 
 </article>
@@ -138,7 +214,7 @@
     
 
     
-    <p>last update time 2019-05-18</p>
+    <p>last update time 2019-05-21</p>
     
     
         <a class="extend next post-next" href="/2019/02/17/Spring-Boot整理记录-1/">next</a>

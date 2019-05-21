@@ -61,6 +61,27 @@
     
       <div class="article-item">
         <h2 class="article-item-header">
+          <a href="/2019/05/18/nio总结/用户、组织、车、sim卡、终端/">
+            
+          </a>
+        </h2>
+        <div class="article-item-content">
+          
+            <p>用户、组织、车、sim卡、终端
+...</p>
+          
+        </div>
+        <div class="atricle-item-time">
+          
+            <span>
+              2019-05-18
+            </span>
+          
+        </div>
+      </div>
+    
+      <div class="article-item">
+        <h2 class="article-item-header">
           <a href="/2019/05/16/数据库缓存一致性问题记录/">
             数据库缓存一致性问题记录
           </a>
@@ -68,7 +89,7 @@
         <div class="article-item-content">
           
             <p>前言
-今天偶然看到了一篇关于数据库缓存一致性的博客，想起来了之前做过的业务有相似的处理，这里简单回顾一下思路。
+今天偶然看到了一篇关于数据库缓存一致性的博客，想起来了之前做过的业务有相似的处理，这里简单记录一下。
 
 正文
 缓存的IO速度要大于磁盘IO
@@ -77,7 +98,7 @@
 
 
 
-一般情况下把热数据缓存，这也是Redis这些工具的常见用法，查询操作时可以先...</p>
+一般情况下把热数据缓存，这也是Redis这些工具的常见用法，查询操作时可以先查缓...</p>
           
         </div>
         <div class="atricle-item-time">
@@ -121,26 +142,18 @@ Java语言具有跨平台的特性，配合Java虚拟机即可run everywhere，J
       <div class="article-item">
         <h2 class="article-item-header">
           <a href="/2019/02/27/Java并发概念和使用/">
-            Java并发概念和使用
+            Java线程基本概念和使用
           </a>
         </h2>
         <div class="article-item-content">
           
-            <p>Java线程基本概念总结
-进程和线程的关系：
-简单理解，一个进程可以有1个或多个线程，单个线程内顺序执行，多线程同时刻可认为是并发执行。
+            <p>Java内存模型（JMM）和线程
+并发的理解
+CPU的运算速度很快，但数据的传输，存储速度会很大程度上拖累CPU的运算，这种情况下CPU大部分时间都是在等待，如果想充分利用CPU就需要通过调度，同时处理多个任务，让CPU不停的工作
 
 
-Java中的线程使用：
-实现方式：
-继承thread类
-实现runnable接口
-
-
-PS：线程start()后，执行顺序不一定按照调用顺序执行。
-
-
-线程的...</p>
+Java内存模型和线程（涉及到硬件不太熟，简单带过一些概念）：
+...</p>
           
         </div>
         <div class="atricle-item-time">
@@ -182,7 +195,7 @@ PS：线程start()后，执行顺序不一定按照调用顺序执行。
         <div class="article-item-content">
           
             <p>前言
-之前一年半除了基本业务外一直在做通信、netty相关工作，现在回想一下学习通讯确实很有用，为后面学习RPC、spring cloud、参与开源项目等等都打了很好的基础，这篇博客根据《netty权威指南》和一些工作上的经验总结NIO相关知识点。AIO了解不多，netty也暂时没有AIO支持，也就...</p>
+之前一年半除了基本业务外一直在做通信、netty相关工作，现在回想一下学习通讯确实很有用，为后面学习RPC、spring cloud等等很多东西都打了很好的基础，这篇博客根据《netty权威指南》和一些工作上的经验总结NIO相关知识点。AIO了解不多，netty也暂时没有AIO支持，也就侧面证...</p>
           
         </div>
         <div class="atricle-item-time">
