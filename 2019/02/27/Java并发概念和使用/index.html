@@ -145,9 +145,20 @@
 </li>
 <li>volatile：<ul>
 <li>volatile：volatile不算锁，和锁类似的地方只是volatile能解决并发特性中除了原子性的其他两个，所以volatile比锁的局限性会大，但效率会高。</li>
-<li>功能：解决了可见性和有序性的问题，太深层的东西感觉意义并不是很大，描述两个例子。<ul>
+<li>功能：描述两个例子。<ul>
 <li>可见性：两个线程同时操作一个变量flag，thread1开启后循环访问flag，然后thread2修改flag，如果flag没有添加volatile关键字，thread1可能不会及时发现flag已改变，thread1还在持续访问自己工作内存的副本flag，加入volatile后可以及时看到变化，原理详见可见性描述。</li>
-<li>有序性：双检锁单例中用到了volatile，就是经典的有序性，代码就不贴了，两次判空初始化单例对象，内部判空前加锁防止多线程重复初始化，初始化对象singleton = new Singleton();时内部分为三个操作，1.singleton分配空间，2.初始化Singleton()，3.singleton指向Singleton对象，其中2和3可能会出现顺序颠倒，这样一个线程初始化singleton时执行3，另一线程判空会返回false有可能会返回空对象。</li>
+<li>有序性：双检锁单例中用到了volatile，就是经典的有序性，代码就不贴了，两次判空初始化单例对象，内部判空前加锁防止多线程重复初始化，初始化对象singleton = new Singleton();时内部分为三个操作，1.singleton分配空间，2.调用构造函数，3.singleton指向Singleton对象，其中2和3可能会出现顺序颠倒，这样一个线程初始化singleton时执行3，另一线程判空会返回false会返回未初始化完成的对象。</li>
+</ul>
+</li>
+<li>happens-before：多操作如果符合happens-before的规则，后面的多线程数据一致性就是正确的<ul>
+<li>程序次序规则：一个线程内，代码结果不变，执行顺序可能重排</li>
+<li>锁定规则：同一个锁unLock和lock必须按顺序且所有线程可见</li>
+<li>volatile变量规则：如果写先于读，读必须可见，也就是volatile可见性的问题</li>
+<li>传递性：A先于B，B先于C，A必然先于C</li>
+<li>线程启动规则：子线程启动，之前主线程的数据可见</li>
+<li>线程终止规则：子线程终止，主线程可见</li>
+<li>线程中断规则：interrupt()优先于监测中断的事件</li>
+<li>对象终结规则：对象初始化happens-before于finalize()</li>
 </ul>
 </li>
 <li>使用：除了上面的双检锁单例，在并发包中很常见，很多非原子性并发的地方会用到，例如atomic等</li>
@@ -173,7 +184,7 @@
 <li>synchronized和ReentrantLock实现原理上也有很大区别，这里就不多说了</li>
 </ul>
 </li>
-<li>使用：最明显的就是上锁lock.lock()、释放lock.unlock()，一般保证锁必须被释放，把unlock()写在finally中，ReentrantLock提供了很多其他功能，我自己在工作中也很少用到，所以就不细说了。</li>
+<li>使用：最明显的就是上锁lock.lock()、释放lock.unlock()，一般保证锁必须被释放，把unlock()写在finally中，ReentrantLock提供了很多其他功能，我自己在工作中很少用到，就不细说了。</li>
 </ul>
 </li>
 <li>线程池：<ul>
@@ -214,7 +225,7 @@
     
 
     
-    <p>last update time 2019-05-21</p>
+    <p>last update time 2019-05-23</p>
     
     
         <a class="extend next post-next" href="/2019/02/17/Spring-Boot整理记录-1/">next</a>
